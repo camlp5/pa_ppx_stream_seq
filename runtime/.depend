@@ -1,0 +1,8 @@
+pa_ppx_stream_seq_runtime.cmo pa_ppx_stream_seq_runtime.cmi pa_ppx_stream_seq_runtime.cmx: 
+pa_ppx_stream_seq_runtime.cmo : \
+    pa_ppx_stream_seq_runtime.cmi
+pa_ppx_stream_seq_runtime.cmx : \
+    pa_ppx_stream_seq_runtime.cmi
+pa_ppx_stream_seq_runtime.cmi :
+mk_meta.cmo :
+mk_meta.cmx :

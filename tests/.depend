@@ -1,0 +1,3 @@
+pa_ppx_stream_seq_test.cmo pa_ppx_stream_seq_test.cmi pa_ppx_stream_seq_test.cmx: ../local-install/lib/pa_ppx_stream_seq/META ../local-install/lib/pa_ppx_stream_seq/META
+pa_ppx_stream_seq_test.cmo :
+pa_ppx_stream_seq_test.cmx :

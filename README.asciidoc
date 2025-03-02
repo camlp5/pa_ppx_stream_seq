@@ -1,0 +1,6 @@
+`pa_ppx_stream_seq version 0.01`: PPX extensions for dealing with Stream.t and Seq.t
+====================================================================================
+:toc:
+:toc-placement: preamble
+
+what it says on the tin

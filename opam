@@ -1,0 +1,39 @@
+version: "0.01"
+synopsis: "A Camlp5 PPX Rewriter dealing with Stream.t and Seq.t
+description:
+"""
+This is a PPX Rewriter to provide syntax support for Stream.t and Seq.t
+"""
+opam-version: "2.0"
+x-maintenance-intent: [ "(latest)" ]
+maintainer: "Chet Murthy <chetsky@gmail.com>"
+authors: ["Chet Murthy"]
+homepage: "https://github.com/camlp5/pa_ppx_stream_seq"
+license: "BSD-3-Clause"
+bug-reports: "https://github.com/camlp5/pa_ppx_stream_seq/issues"
+dev-repo: "git+https://github.com/camlp5/pa_ppx_stream_seq.git"
+doc: "https://github.com/camlp5/pa_ppx_stream_seq/doc"
+
+depends: [
+  "ocaml"       { >= "4.10.0" }
+  "camlp5-buildscripts" { >= "0.02" }
+  "camlp5"      { >= "8.01.00" }
+  "pcre2" { >= "8.0.3" }
+  "pa_ppx"      { >= "0.12" }
+  "not-ocamlfind" { >= "0.13" }
+  "ounit" { >= "2.2.7" }
+  "fmt"
+  "mdx" { >= "2.3.0" & with-test}
+  "pa_ppx_regexp" { >= "0.04" }
+]
+build: [
+  [make "DEBUG=-g" "sys"]
+  [make "test"] {with-test}
+]
+install: [make "install"]
+url {
+  src: ""
+  checksum: [
+    "sha512="
+  ]
+}

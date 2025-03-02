@@ -1,0 +1,43 @@
+#use "topfind.camlp5";;
+#require "compiler-libs.common" ;;
+#require "camlp-streams";;
+#require "oUnit";;
+#require "fmt";;
+#require "rresult";;
+#require "bos";;
+#require "re";;
+#require "str";;
+
+#require "camlp5.pa_op";;
+Pcaml.inter_phrases := Some ";;\n";;
+(*
+#require "camlp5.pa_r";;
+Pcaml.inter_phrases := Some ";\n";;
+ *)
+
+#require "camlp5.pr_o";;
+
+(*
+#require "camlp5.pr_r";;
+Pcaml.inter_phrases := Some ";\n";;
+ *)
+
+#require "pa_ppx.testutils";;
+open Pa_ppx_testutils ;;
+open Papr_util ;;
+open PAPR ;;
+
+
+#require "pa_ppx_static.runtime";;
+#require "pa_ppx_fmtformat";;
+open Pa_ppx_fmtformat ;;
+open Pa_fmtformat ;;
+
+{foo| {%fmt_str|a b c $(|")"|string|) d e f|} |foo} |> Stream.of_string |> Implem.pa |> Implem.pr |> print_string ;;
+
+(*
+;;; Local Variables: ***
+;;; mode:tuareg ***
+;;; End: ***
+
+*)
