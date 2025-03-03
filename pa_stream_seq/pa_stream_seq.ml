@@ -27,7 +27,6 @@ EXTEND
   ;
 END;;
 
-let do_parse_stream_expr str = (Grammar.Entry.parse stream_expr_eoi) (Stream.of_string str) ;;
 let do_parse_stream_parser str = (Grammar.Entry.parse stream_parser_eoi) (Stream.of_string str) ;;
 let do_parse_match_expr str = (Grammar.Entry.parse stream_match_eoi) (Stream.of_string str) ;;
 
@@ -63,32 +62,49 @@ let eval_anti pafun loc typ str =
 let reloc_to_subloc ~enclosed subloc =
   Ploc.(sub enclosed (first_pos subloc) (last_pos subloc))
 
-let reloc_stream_expr floc shift x = x
+module StreamExpr = struct
+let do_parse str = (Grammar.Entry.parse stream_expr_eoi) (Stream.of_string str) ;;
 
-let parse_stream_expr loc str =
-  let (_,e) = eval_anti do_parse_stream_expr loc "" str in
+let reloc floc shift x = x
+
+let parse loc str =
+  let (_,e) = eval_anti do_parse loc "" str in
   let shift = 0 in
-  reloc_stream_expr (fun subloc -> reloc_to_subloc ~enclosed:loc subloc) shift e
+  reloc (fun subloc -> reloc_to_subloc ~enclosed:loc subloc) shift e
 
-let stream_expr_expr loc str =
-  let (loc, sel) = parse_stream_expr loc str in
+let to_expr loc str =
+  let (loc, sel) = parse loc str in
   Exparser.cstream loc sel
 
-let rewrite_stream_expr arg = function
+let rewrite arg = function
   <:expr< [%stream_expr $exp:e$ ] >> ->
    let (loc, s) = match e with <:expr< $locstr:(loc,s)$ >> -> (loc, Pcaml.unvala s) in
-   stream_expr_expr loc (s |> Scanf.unescaped)
+   to_expr loc (s |> Scanf.unescaped)
 
 | _ -> assert false
+end
 
-(*
-let rewrite_stream_parser arg = function
+module StreamParser = struct
+let do_parse str = (Grammar.Entry.parse stream_parser_eoi) (Stream.of_string str) ;;
+
+let reloc floc shift x = x
+
+let parse loc str =
+  let (_,e) = eval_anti do_parse loc "" str in
+  let shift = 0 in
+  reloc (fun subloc -> reloc_to_subloc ~enclosed:loc subloc) shift e
+
+let to_expr loc str =
+  let (loc, (po, pcl)) = parse loc str in
+  Exparser.cparser loc (po, pcl)
+
+let rewrite arg = function
   <:expr< [%stream_parser $exp:e$ ] >> ->
    let (loc, s) = match e with <:expr< $locstr:(loc,s)$ >> -> (loc, Pcaml.unvala s) in
-   stream_parser_expr loc (s |> Scanf.unescaped)
+   to_expr loc (s |> Scanf.unescaped)
 
 | _ -> assert false
- *)
+end
 
 let install () = 
 let ef = EF.mk () in 
@@ -96,12 +112,12 @@ let ef = EF.{ (ef) with
             expr = extfun ef.expr with [
     <:expr:< [%stream_expr $str:_$] >> as z ->
     fun arg fallback ->
-    Some (rewrite_stream_expr arg z)
-(*
+    Some (StreamExpr.rewrite arg z)
+
   | <:expr:< [%stream_parser $str:_$] >> as z ->
     fun arg fallback ->
-    Some (rewrite_stream_parser arg z)
- *)
+    Some (StreamParser.rewrite arg z)
+
   ] } in
 
   Pa_passthru.(install { name = "pa_stream_seq"; ef =  ef ; pass = None ; before = [] ; after = [] })
